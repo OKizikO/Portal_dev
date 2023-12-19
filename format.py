@@ -203,7 +203,7 @@ def people():
 	
 # -----------------BUILDS THE JSON OUTPUT
 
-'''
+
 def build_output():
         date = get_date()
         alerts = alert_count()
@@ -231,6 +231,5 @@ def build_output():
         print(json_data)
 
 build_output()
-'''
 
-people()
+#people()
