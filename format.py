@@ -7,26 +7,20 @@ import re
 # init all html data gathered from get_source script
 with open('source/alerts.html', 'r', encoding='utf-8') as file:
 	alerts_data = file.read()
-alerts_soup = bs(alerts_data, 'html.parser')
 with open('source/mystore.html', 'r', encoding='utf-8') as file:
 	mystore_data = file.read()
-mystore_soup = bs(mystore_data, 'html.parser')
 with open('source/people.html', 'r', encoding='utf-8') as file:
 	people_data = file.read()
 with open('source/psq.html', 'r', encoding='utf-8') as file:
 	psq_data = file.read()
-psq_soup = bs (psq_data, 'html.parser')
 with open('source/ranks.html', 'r', encoding='utf-8') as file:
 	ranks_data = file.read()
-ranks_soup = bs(ranks_data, 'html.parser')
 with open('source/rates.html', 'r', encoding='utf-8') as file:
 	rates_data = file.read()
 with open('source/sales.html', 'r', encoding='utf-8') as file:
 	sales_data = file.read()
-sales_soup = bs(sales_data, 'html.parser')
 with open('source/trends.html', 'r', encoding='utf-8') as file:
 	trends_data = file.read()
-trends_soup = bs(trends_data, 'html.parser')
 
 # gets the last updated date from the rates source file
 def get_date():
@@ -42,7 +36,8 @@ def get_date():
 		
 # gets tue total store alert count
 def alert_count():
-	count = alerts_soup.find('h5', class_="f_attwhite", style="margin:0px;padding:2px;").text
+	soup = bs(alerts_data, 'html.parser')
+	count = soup.find('h5', class_="f_attwhite", style="margin:0px;padding:2px;").text
 	pattern = re.compile(r'\d+(\.\d+)?')
 	match = pattern.search(count)
 	if match:
@@ -75,10 +70,11 @@ def rankings():
 	
 # gets the store alert details
 def alert_status():
+	soup = bs(alerts_data, 'html.parser')
 	sales_alerts = [
 	{item.find('h4', class_='sender').text.strip():
 	item.find('span', class_='label').text.strip() if item.find('span', class_='label') else 0}
-	for item in alerts_soup.find_all('li')
+	for item in soup.find_all('li')
 	]
 	result_dict = {}
 	for entry in sales_alerts:
@@ -89,7 +85,8 @@ def alert_status():
 	
 # gets individual employee PSQ data
 def psq():
-	table = psq_soup.find('table', {'id': 'marketopsalert_download_2_'})
+	soup = bs(psq_data, 'html.parser')
+	table = soup.find('table', {'id': 'marketopsalert_download_2_'})
 	headers = [header.text.strip() for header in table.find_all('th')]
 	rows = table.find_all('tr')[1:]
 	data = []
@@ -104,14 +101,16 @@ def psq():
 	
 # gets the stores 12 month historical sales data
 def sales():
-	table = sales_soup.find('table', {'id': 'store_sales_dsr'})
+	soup = bs(sales_data, 'html.parser')
+	table = soup.find('table', {'id': 'store_sales_dsr'})
 	df = pd.read_html(str(table))[0]
 	json_data = df.to_json(orient='records')
 	return(json_data)
 	
 # gets the stores daily goal based on run rate
 def rpd():
-	text_content = trends_soup.get_text(separator='\n', strip=True)
+	soup = bs(trends_data, 'html.parser')
+	text_content = soup.get_text(separator='\n', strip=True)
 	input_text_cleaned = re.sub(r'\*.*', '', text_content, flags=re.DOTALL)
 	req_day_values = re.findall(r'Req/Day\D*(\d+)', input_text_cleaned)
 	categories = ['opps', 'ppvga', 'tv', 'bb', 'pa', 'ar']
@@ -154,37 +153,36 @@ def rates():
 	pairs = output_string.split(',')
 	data_dict = {}
 	for pair in pairs:
-	    key_value = pair.split(':')
-	    key = key_value[0]
-	    if len(key_value) > 1:
-	        value_str = key_value[1].strip()
-	        if '.' in value_str:
-	            value = float(value_str)
-	        elif value_str.isdigit() or (value_str[0] == '-' and value_str[1:].isdigit()):
-	            value = int(value_str)
-	        else:
-	            value = value_str
-	        data_dict[key] = value
-	    else:
-	        data_dict[key] = None
+		key_value = pair.split(':')
+		key = key_value[0]
+		if len(key_value) > 1:
+			value_str = key_value[1].strip()
+			if '.' in value_str:
+				value = float(value_str)
+			elif value_str.isdigit() or (value_str[0] == '-' and value_str[1:].isdigit()):
+				value = int(value_str)
+			else:
+				value = value_str
+			data_dict[key] = value
+		else:
+			data_dict[key] = None
 	return(data_dict)
 
-
-# gets all the stores green box data
+# gets the stores UCR
 def ucr():
 	soup = bs(alerts_data, 'html.parser')
 	table = soup.find('table')
 	table_data = {}
 	headers = []
 	for row in table.find_all('tr'):
-	    columns = row.find_all(['td', 'th'])
-	    if not headers:
-	        headers = [header.text.strip() for header in columns]
-	    else:
-	        row_data = {}
-	        for i in range(len(columns)):
-	            row_data[headers[i]] = columns[i].text.strip()
-	        table_data[row_data[headers[0]]] = row_data
+		columns = row.find_all(['td', 'th'])
+		if not headers:
+			headers = [header.text.strip() for header in columns]
+		else:
+			row_data = {}
+			for i in range(len(columns)):
+				row_data[headers[i]] = columns[i].text.strip()
+			table_data[row_data[headers[0]]] = row_data
 	upgrade_value = table_data['N/A']['Upgrade']
 	upgrade_value = upgrade_value.replace('%', '')
 	return(float(upgrade_value))
