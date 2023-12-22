@@ -21,7 +21,7 @@ with open('source/sales.html', 'r', encoding='utf-8') as file:
 	sales_data = file.read()
 with open('source/trends.html', 'r', encoding='utf-8') as file:
 	trends_data = file.read()
-
+	
 # gets the last updated date from the rates source file
 def get_date():
 	soup = bs(rates_data, 'html.parser')
@@ -128,11 +128,11 @@ def csat():
 	csat_match = csat_pattern.search(stripped)
 	ppvgacancel_match = ppvgacancel_pattern.search(stripped)
 	result_dict = {
-		"CSAT": float(csat_match.group(1)) if csat_match else None,
-		"PPVGACANCEL": float(ppvgacancel_match.group(1)) if ppvgacancel_match else None
-}
+	"CSAT": float(csat_match.group(1)) if csat_match else None,
+	"PPVGACANCEL": float(ppvgacancel_match.group(1)) if ppvgacancel_match else None
+	}
 	return(result_dict)
-		
+	
 # gets the stores run rates
 def rates():
 	soup = bs(rates_data, 'html.parser').text
@@ -167,7 +167,7 @@ def rates():
 		else:
 			data_dict[key] = None
 	return(data_dict)
-
+	
 # gets the stores UCR
 def ucr():
 	soup = bs(alerts_data, 'html.parser')
@@ -185,32 +185,121 @@ def ucr():
 			table_data[row_data[headers[0]]] = row_data
 	upgrade_value = table_data['N/A']['Upgrade']
 	upgrade_value = upgrade_value.replace('%', '')
-	return(float(upgrade_value))
-
-
-
-
+	return(float(upgrade_value))	
+	
 # gets the stores individual employeee sales data
 def people():
-	ct = 0
-	fn = 'temp'
+	people = []
 	soup = bs(people_data, 'html.parser')
 	data = soup.find_all('div', class_='col-md-12 mb5')
+	data.pop(0)
 	for i in data:
 		data_str = str(i)
-		with open(f'{fn+str(ct)}.html', 'w', encoding='utf-8') as file:
-			file.write(data_str)
-		ct += 1
+		data_str = data_str.replace('\n', '')
+		soup = bs(data_str, 'html.parser')
+		employee = soup.find('p', class_='title-sender').text
+		employee = employee.replace('Date:', '')
+		words = employee.split()
+		first_name = words[0]
+		last_name = words[1]
+		emp_name = first_name +' '+ last_name
+		title = words[2]
+		hire_date = " ".join(words[4:])
+		updated = soup.find('h3', class_="panel-title align-middle").text
+		updated_on = re.findall(r'\((.*?)\)', updated)
+		pattern = r'\d{1,2}/\d{1,2}/\d{2,4}'
+		match = re.search(pattern, str(updated_on))
+		if match:
+			extracted_date = match.group()
+		else:
+			print("No date found.")
+		ranks = soup.find_all('div', class_='col-sm-6')
+		district_rank = ranks[0].text
+		split_string = district_rank.split(':')
+		if len(split_string) > 1:
+			district_rank = split_string[1].strip()
+		else:
+			print("Colon not found in the district string.")
+		market_rank = ranks[1].text
+		split_string = market_rank.split(':')
+		if len(split_string) > 1:
+			market_rank = split_string[1].strip()
+		else:
+			print("Colon not found in the market string.")
+		boxes = soup.find_all('div', class_='col-sm-2')
+		opps = boxes[0].text
+		opps = opps.replace('\n', '').replace(' ', '').replace('%', ' ').replace('H.Risk', 'HighRisk').replace('Plus1s:', 'PlusOne:')
+		opps = re.sub(r'(\d+)([A-Za-z])', r'\1 \2', opps)
+		key_value_pairs = re.findall(r'(\w+):(\S+)', opps)
+		opps_dict = dict(key_value_pairs)
+		prem = boxes[1].text
+		prem = prem.replace(' ', '')
+		prem = re.sub(r'(\d+)([A-Za-z])', r'\1 \2', prem)
+		key_value_pairs = re.findall(r'(\w+):(\S+)', prem)
+		prem_dict = dict(key_value_pairs)
+		cru = boxes[2].text
+		cru = cru.replace(' ', '')
+		cru = re.sub(r'(\d+)([A-Za-z])', r'\1 \2', cru)
+		key_value_pairs = re.findall(r'(\w+):(\S+)', cru)
+		cru_dict = dict(key_value_pairs)
+		pa = boxes[3].text
+		pa = pa.replace(' ', '').replace('ProtectionGoal:65%', 'ProtectionGoal:65%PARR:').replace('%', '')
+		pa = re.sub(r'(\d+)([A-Za-z])', r'\1 \2', pa)
+		key_value_pairs = re.findall(r'(\w+):(\S+)', pa)
+		pa_dict = dict(key_value_pairs)
+		ar = boxes[4].text
+		ar = ar.replace(' ', '')
+		pattern = re.compile(r'(?<=\$)([\d,]+)(?=\$)')
+		ar = pattern.sub(r'$\1ACRR:', ar)
+		ar = ar.replace('$', '').replace(',', '')
+		ar = re.sub(r'(\d+)([A-Za-z])', r'\1 \2', ar)
+		key_value_pairs = re.findall(r'(\w+):(\S+)', ar)
+		ar_dict = dict(key_value_pairs)
+		rpm = boxes[5].text
+		rpm = rpm.replace('%', '').replace(' ', '').replace('RatePlanGoal:88', 'RatePlanGoal:88RPMRR:')
+		rpm = re.sub(r'(\d+)([A-Za-z])', r'\1 \2', rpm)
+		key_value_pairs = re.findall(r'(\w+):(\S+)', rpm)
+		rpm_dict = dict(key_value_pairs)
+		
+		output = {emp_name:{
+			'title': title,
+			'hired': hire_date,
+			'updated': extracted_date,
+			'district': district_rank,
+			'market': market_rank,
+			'opps': opps_dict,
+			'prem': prem_dict,
+			'cru': cru_dict,
+			'pa': pa_dict,
+			'ar': ar_dict,
+			'rpm': rpm_dict
+		}}
+		people.append(output)
+	return(people)
+	
+# gets all employee ci lead data
+def cileads():
+	soup = bs(alerts_data, 'html.parser')
+	table = soup.find('table', {'id': 'cileadsmodalboxdetail'})
+	headers = [header.text.strip() for header in table.find_all('th')]
+	rows = []
+	for row in table.find_all('tr')[1:]:
+		row_data = [data.text.strip() for data in row.find_all('td')]
+		rows.append(row_data)
+	df = pd.DataFrame(rows, columns=headers)
+	json_data = df.to_json(orient='records', indent=2)
+	json_dict = json.loads(json_data)
+	for i in json_dict:
+		del i['Region']
+		del i['Market']
+		del i['DM']
+		del i['Location']
+	return(json_dict)
 
-	
-	
-	
-	
-	
-	
+
+
 # -----------------BUILDS THE JSON OUTPUT
 
-'''
 def build_output():
         date = get_date()
         alerts = alert_count()
@@ -218,26 +307,31 @@ def build_output():
         ucrp = ucr()
         status = alert_status()
         psqs = psq()
+        lds = cileads()
         rrates = rates()
         reqpd = rpd()
         hist = sales()
         csats = csat()
+        ppl = people()
         result = { date: {
                 'alerts': alerts,
                 'rank': rank,
                 'ucr': ucrp,
                 'status': status,
                 'psq': psqs,
+                'leads': lds,
                 'rates': rrates,
                 'RPD': reqpd,
                 'csat': csats,
+                'people': ppl,
                 'historical': hist
                 }
         }
-        json_data = json.dumps(result, indent=2)
-        print(json_data)
+        json_data = json.dumps(result)
+        return(json_data)
 
-build_output()
-'''
+data = build_output()
+with open('data/daily.json', 'w') as file:
+	json.dump(data, file)
 
-people()
+print('File Saved')
