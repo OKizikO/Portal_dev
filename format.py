@@ -192,9 +192,16 @@ def ucr():
 
 # gets the stores individual employeee sales data
 def people():
+	ct = 0
+	fn = 'temp'
 	soup = bs(people_data, 'html.parser')
-	print(soup)
-	
+	data = soup.find_all('div', class_='col-md-12 mb5')
+	for i in data:
+		data_str = str(i)
+		with open(f'{fn+str(ct)}.html', 'w', encoding='utf-8') as file:
+			file.write(data_str)
+		ct += 1
+
 	
 	
 	
