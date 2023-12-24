@@ -34,7 +34,7 @@ def get_date():
 	else:
 		print("Date not found.")
 		
-# gets tue total store alert count
+# gets the total store alert count
 def alert_count():
 	soup = bs(alerts_data, 'html.parser')
 	count = soup.find('h5', class_="f_attwhite", style="margin:0px;padding:2px;").text
@@ -92,10 +92,15 @@ def psq():
 	data = []
 	for row in rows:
 		row_data = [cell.text.strip() for cell in row.find_all('td')]
+		for col_index, value in enumerate(row_data):
+			try:
+				row_data[col_index] = float(value)
+			except ValueError:
+				pass
 		data.append(dict(zip(headers, row_data)))
 	filtered_data = [
-	{k: v for k, v in entry.items() if k.lower() not in ['vp', 'market', 'dm', 'store']}
-	for entry in data
+	    {k: v for k, v in entry.items() if k.lower() not in ['vp', 'market', 'dm', 'store']}
+	    for entry in data
 	]
 	return(filtered_data)
 	
@@ -112,7 +117,7 @@ def rpd():
 	soup = bs(trends_data, 'html.parser')
 	text_content = soup.get_text(separator='\n', strip=True)
 	input_text_cleaned = re.sub(r'\*.*', '', text_content, flags=re.DOTALL)
-	req_day_values = re.findall(r'Req/Day\D*(\d+)', input_text_cleaned)
+	req_day_values = [float(value) for value in re.findall(r'Req/Day\D*(\d+)', input_text_cleaned)]
 	categories = ['opps', 'ppvga', 'tv', 'bb', 'pa', 'ar']
 	result_dict = dict(zip(categories, req_day_values))
 	result_dict.pop('bb', None)
@@ -148,6 +153,7 @@ def rates():
 	strip = modified_string.replace('%','').replace(' ', '')
 	pattern = re.compile(r'(\w+PPVGAYOYGoal:>=)(0*)(\d+\.?\d*)')
 	modified_string = pattern.sub(r'\1\2 YOY:\3', strip)
+	modified_string = modified_string.replace('RR', 'OppsRR', 1)
 	output_string = re.sub(r'(\d)([A-Za-z])', r'\1 \2', modified_string)
 	output_string = output_string.replace('$', '').replace(',', '').replace(' ', ',').replace('Plus1,RR', 'Plus1RR')
 	pairs = output_string.split(',')
@@ -166,6 +172,36 @@ def rates():
 			data_dict[key] = value
 		else:
 			data_dict[key] = None
+	with open('source/cru.html', 'r') as file:
+		data = file.read()
+	soup = bs(data, 'html.parser')
+	table = soup.find('table', {'class': 'table table-hover table-primary table-sm table-condensed tbl-slarge-font'})
+	rows = table.find_all('tr')
+	cru_goal = 0
+	for row in rows[1:]:  
+		columns = row.find_all('td')
+		cru_goal = float(columns[9].get_text(strip=True))
+	with open('source/tv.html', 'r') as file:
+		data = file.read()
+	soup = bs(data, 'html.parser')
+	table = soup.find('table', {'class': 'table table-hover table-primary table-sm table-condensed tbl-slarge-font'})
+	rows = table.find_all('tr')
+	tv_goal = 0
+	for row in rows[1:]:  
+		columns = row.find_all('td')
+		tv_goal = float(columns[9].get_text(strip=True))
+	with open('source/plus1.html', 'r') as file:
+		data = file.read()
+	soup = bs(data, 'html.parser')
+	table = soup.find('table', {'class': 'table table-hover table-primary table-sm table-condensed tbl-slarge-font'})
+	rows = table.find_all('tr')
+	plus1_goal = 0
+	for row in rows[1:]:  
+		columns = row.find_all('td')
+		plus1_goal = float(columns[8].get_text(strip=True))
+	data_dict['crugoal'] = cru_goal
+	data_dict['tvgoal'] = tv_goal
+	data_dict['plus1goal'] = plus1_goal
 	return(data_dict)
 	
 # gets the stores UCR
@@ -260,22 +296,31 @@ def people():
 		rpm = re.sub(r'(\d+)([A-Za-z])', r'\1 \2', rpm)
 		key_value_pairs = re.findall(r'(\w+):(\S+)', rpm)
 		rpm_dict = dict(key_value_pairs)
-		
 		output = {emp_name:{
-			'title': title,
-			'hired': hire_date,
-			'updated': extracted_date,
-			'district': district_rank,
-			'market': market_rank,
-			'opps': opps_dict,
-			'prem': prem_dict,
-			'cru': cru_dict,
-			'pa': pa_dict,
-			'ar': ar_dict,
-			'rpm': rpm_dict
+		'title': title,
+		'hired': hire_date,
+		'updated': extracted_date,
+		'district': district_rank,
+		'market': market_rank,
+		'opps': opps_dict,
+		'prem': prem_dict,
+		'cru': cru_dict,
+		'pa': pa_dict,
+		'ar': ar_dict,
+		'rpm': rpm_dict
 		}}
 		people.append(output)
-	return(people)
+	def convert_to_float(result):
+		if isinstance(result, dict):
+			for key, value in result.items():
+				result[key] = convert_to_float(value)
+		elif isinstance(result, list):
+			result = [convert_to_float(item) for item in result]
+		elif isinstance(result, str) and result.isdigit():
+			result = float(result)
+		return(result)
+	converted_data = convert_to_float(people)
+	return(converted_data)
 	
 # gets all employee ci lead data
 def cileads():
@@ -294,7 +339,13 @@ def cileads():
 		del i['Market']
 		del i['DM']
 		del i['Location']
-	return(json_dict)
+	def convert_to_float(value):
+		try:
+			return float(value)
+		except ValueError:
+			return value
+	converted_data = [{key: convert_to_float(value) for key, value in entry.items()} for entry in json_dict]
+	return(converted_data)
 
 
 

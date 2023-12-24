@@ -78,4 +78,37 @@ pretty_html = soup.prettify()
 with open('source/psq.html', 'w', encoding='utf-8') as file:
 	file.write(pretty_html)
 
+s = session.post("https://myprimeportal.com/ssalesalert/ajax/9/2132")
+soup = json.loads(s.content)
+html_content = ""
+for item in soup:
+	if 'output' in item:
+		html_content += item['output']
+soup = bs(html_content, 'html.parser')
+pretty_html = soup.prettify()
+with open('source/plus1.html', 'w', encoding='utf-8') as file:
+	file.write(pretty_html)
+
+s = session.post("https://myprimeportal.com/ssalesalert/ajax/1/2132")
+soup = json.loads(s.content)
+html_content = ""
+for item in soup:
+	if 'output' in item:
+		html_content += item['output']
+soup = bs(html_content, 'html.parser')
+pretty_html = soup.prettify()
+with open('source/cru.html', 'w', encoding='utf-8') as file:
+	file.write(pretty_html)
+	
+s = session.post("https://myprimeportal.com/ssalesalert/ajax/25/2132")
+soup = json.loads(s.content)
+html_content = ""
+for item in soup:
+	if 'output' in item:
+		html_content += item['output']
+soup = bs(html_content, 'html.parser')
+pretty_html = soup.prettify()
+with open('source/tv.html', 'w', encoding='utf-8') as file:
+	file.write(pretty_html)
+
 print('source files updated')

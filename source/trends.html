@@ -7,7 +7,7 @@
      </div>
     </div>
     <span style="display:none">
-     71%
+     75%
     </span>
     Opps
    </div>
@@ -22,7 +22,7 @@
        MTD
       </td>
       <th scope="row">
-       132
+       139
       </th>
      </tr>
      <tr>
@@ -38,7 +38,7 @@
        To Go
       </td>
       <th class="text-center" scope="row">
-       53
+       46
       </th>
      </tr>
      <tr>
@@ -61,7 +61,7 @@
      </div>
     </div>
     <span style="display:none">
-     89%
+     97%
     </span>
     PPVGA
    </div>
@@ -76,7 +76,7 @@
        MTD
       </td>
       <th class="text-center" scope="row">
-       58
+       63
       </th>
      </tr>
      <tr>
@@ -92,7 +92,7 @@
        To Go
       </td>
       <th class="text-center" scope="row">
-       7
+       2
       </th>
      </tr>
      <tr>
@@ -283,7 +283,7 @@
      </div>
     </div>
     <span style="display:none">
-     56%
+     57%
     </span>
     Acc Rev
    </div>
@@ -298,7 +298,7 @@
        MTD
       </td>
       <th class="text-center" scope="row">
-       $5,138
+       $5,247
       </th>
      </tr>
      <tr>
@@ -314,7 +314,7 @@
        To Go
       </td>
       <th class="text-center" scope="row">
-       $4,012
+       $3,903
       </th>
      </tr>
      <tr>
@@ -322,7 +322,7 @@
        Req/Day
       </td>
       <th class="text-center" scope="row">
-       $402
+       $434
       </th>
      </tr>
     </tbody>
@@ -330,31 +330,31 @@
   </div>
  </div>
  <script>
-  (function($)
-							{
-							$(".halfcircle-progress").each(function(){  
-							  var $bar = $(this).find(".halfcircle-bar");
-							  var $val = $(this).find("span");
-							  var perc = parseInt( $val.text(), 10);
-
-							  $({p:0}).animate({p:perc}, {
-								duration: 3000,
-								easing: "swing",
-								step: function(p) {
-								  $bar.css({
-									transform: "rotate("+ (45+(p*1.8)) +"deg)", // 100%=180° so: ° = % * 1.8
-									// 45 is to add the needed rotation to have the green borders at the bottom
-								  });
-								  $val.text(p|0);
-								}
-							  });
-							});
+  (function($)
+							{
+							$(".halfcircle-progress").each(function(){  
+							  var $bar = $(this).find(".halfcircle-bar");
+							  var $val = $(this).find("span");
+							  var perc = parseInt( $val.text(), 10);
+
+							  $({p:0}).animate({p:perc}, {
+								duration: 3000,
+								easing: "swing",
+								step: function(p) {
+								  $bar.css({
+									transform: "rotate("+ (45+(p*1.8)) +"deg)", // 100%=180° so: ° = % * 1.8
+									// 45 is to add the needed rotation to have the green borders at the bottom
+								  });
+								  $val.text(p|0);
+								}
+							  });
+							});
 							}(jQuery));
  </script>
  <div style="padding-bottom:35px;">
   * ACC Count: Goal, ToGo and Req/Day are all based on Accessories Opps Run Rate
  </div>
  <div class="text-right">
-  Updated Thru: 12-21-2023
+  Updated Thru: 12-22-2023
  </div>
 </div>
