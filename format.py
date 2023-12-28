@@ -1,5 +1,4 @@
 from bs4 import BeautifulSoup as bs
-from datetime import datetime
 import pandas as pd
 import json
 import re
@@ -22,6 +21,7 @@ with open('source/sales.html', 'r', encoding='utf-8') as file:
 with open('source/trends.html', 'r', encoding='utf-8') as file:
     trends_data = file.read()
 
+
 # gets the last updated date from the rates source file
 def get_date():
     soup = bs(rates_data, 'html.parser')
@@ -33,6 +33,7 @@ def get_date():
         return(date_str)
     else:
         print("Date not found.")
+
 
 # gets the total store alert count
 def alert_count():
@@ -46,6 +47,7 @@ def alert_count():
     else:
         print('error: no alert data found!')
         return None  # Return None if no match is found
+
 
 # gets the store district, market and company rank
 def rankings():
@@ -68,6 +70,7 @@ def rankings():
     }
     return(ranks)
 
+
 # gets the store alert details
 def alert_status():
     soup = bs(alerts_data, 'html.parser')
@@ -86,6 +89,7 @@ def alert_status():
     new_key = '< 77.5% Premium Mix'
     result_dict[new_key] = result_dict.pop('Premium Mix < 77.5%')
     return(result_dict)
+
 
 # gets individual employee PSQ data
 def psq():
@@ -108,6 +112,7 @@ def psq():
     ]
     return(filtered_data)
 
+
 # gets the stores 12 month historical sales data
 def sales():
     soup = bs(sales_data, 'html.parser')
@@ -115,6 +120,7 @@ def sales():
     df = pd.read_html(str(table))[0]
     json_data = df.to_json(orient='records')
     return(json_data)
+
 
 # gets the stores daily goal based on run rate
 def rpd():
@@ -127,6 +133,7 @@ def rpd():
     result_dict.pop('bb', None)
     result_dict.pop('pa', None)
     return(result_dict)
+
 
 # gets the store csat and ppvga cancel rate
 def csat():
@@ -141,6 +148,7 @@ def csat():
         "PPVGACANCEL": float(ppvgacancel_match.group(1)) if ppvgacancel_match else None
     }
     return(result_dict)
+
 
 # gets the stores run rates
 def rates():
@@ -191,7 +199,7 @@ def rates():
     table = soup.find('table', {'class': 'table table-hover table-primary table-sm table-condensed tbl-slarge-font'})
     rows = table.find_all('tr')
     tv_goal = 0
-    for row in rows[1:]:  
+    for row in rows[1:]:
         columns = row.find_all('td')
         tv_goal = float(columns[9].get_text(strip=True))
     with open('source/plus1.html', 'r') as file:
@@ -200,13 +208,14 @@ def rates():
     table = soup.find('table', {'class': 'table table-hover table-primary table-sm table-condensed tbl-slarge-font'})
     rows = table.find_all('tr')
     plus1_goal = 0
-    for row in rows[1:]:  
+    for row in rows[1:]:
         columns = row.find_all('td')
         plus1_goal = float(columns[8].get_text(strip=True))
     data_dict['crugoal'] = cru_goal
     data_dict['tvgoal'] = tv_goal
     data_dict['plus1goal'] = plus1_goal
     return(data_dict)
+
 
 # gets the stores UCR
 def ucr():
@@ -225,7 +234,8 @@ def ucr():
             table_data[row_data[headers[0]]] = row_data
     upgrade_value = table_data['N/A']['Upgrade']
     upgrade_value = upgrade_value.replace('%', '')
-    return(float(upgrade_value))	
+    return(float(upgrade_value))
+
 
 # gets the stores individual employeee sales data
 def people():
@@ -242,7 +252,7 @@ def people():
         words = employee.split()
         first_name = words[0]
         last_name = words[1]
-        emp_name = first_name +' '+ last_name
+        emp_name = first_name + ' ' + last_name
         title = words[2]
         hire_date = " ".join(words[4:])
         updated = soup.find('h3', class_="panel-title align-middle").text
@@ -300,7 +310,7 @@ def people():
         rpm = re.sub(r'(\d+)([A-Za-z])', r'\1 \2', rpm)
         key_value_pairs = re.findall(r'(\w+):(\S+)', rpm)
         rpm_dict = dict(key_value_pairs)
-        output = {emp_name:{
+        output = {emp_name: {
             'title': title,
             'hired': hire_date,
             'updated': extracted_date,
@@ -314,6 +324,7 @@ def people():
             'rpm': rpm_dict
         }}
         people.append(output)
+
     def convert_to_float(result):
         if isinstance(result, dict):
             for key, value in result.items():
@@ -325,6 +336,7 @@ def people():
         return(result)
     converted_data = convert_to_float(people)
     return(converted_data)
+
 
 # gets all employee ci lead data
 def cileads():
@@ -343,6 +355,7 @@ def cileads():
         del i['Market']
         del i['DM']
         del i['Location']
+        
     def convert_to_float(value):
         try:
             return float(value)
@@ -350,6 +363,7 @@ def cileads():
             return value
     converted_data = [{key: convert_to_float(value) for key, value in entry.items()} for entry in json_dict]
     return(converted_data)
+
 
 # saves the formatted data 
 def save_output(data):
@@ -362,6 +376,7 @@ def save_output(data):
         json.dump(json_data, file, indent=2)
 
 # -----------------BUILDS THE JSON OUTPUT
+
 
 def build_output():
     date = get_date()
@@ -376,7 +391,7 @@ def build_output():
     hist = sales()
     csats = csat()
     ppl = people()
-    result = { date: {
+    result = {date: {
         'alerts': alerts,
         'rank': rank,
         'ucr': ucrp,
@@ -393,7 +408,7 @@ def build_output():
     json_data = json.dumps(result)
     return(json_data)
 
+
 data = build_output()
 save_output(data)
-
 print('File Saved')
