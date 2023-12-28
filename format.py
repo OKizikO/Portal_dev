@@ -113,15 +113,6 @@ def psq():
     return(filtered_data)
 
 
-# gets the stores 12 month historical sales data
-def sales():
-    soup = bs(sales_data, 'html.parser')
-    table = soup.find('table', {'id': 'store_sales_dsr'})
-    df = pd.read_html(str(table))[0]
-    json_data = df.to_json(orient='records')
-    return(json_data)
-
-
 # gets the stores daily goal based on run rate
 def rpd():
     soup = bs(trends_data, 'html.parser')
@@ -368,11 +359,7 @@ def cileads():
 # saves the formatted data 
 def save_output(data):
     json_data = json.loads(data)
-    date = get_date()
-    file_name = date.replace('/', '-')
     with open('data/daily.json', 'w') as file:
-        json.dump(json_data, file, indent=2)
-    with open(f'data/daily/{file_name}.json', 'w') as file:
         json.dump(json_data, file, indent=2)
 
 # -----------------BUILDS THE JSON OUTPUT
@@ -388,7 +375,6 @@ def build_output():
     lds = cileads()
     rrates = rates()
     reqpd = rpd()
-    hist = sales()
     csats = csat()
     ppl = people()
     result = {date: {
@@ -401,8 +387,7 @@ def build_output():
         'rates': rrates,
         'RPD': reqpd,
         'csat': csats,
-        'people': ppl,
-        'historical': hist
+        'people': ppl
     }
              }
     json_data = json.dumps(result)
