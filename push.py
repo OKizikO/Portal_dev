@@ -13,10 +13,9 @@ coll = 'daily'
 # open json file created by format routine
 with open('data/daily.json', 'r')as file:
 	data = json.load(file)
-	json_data = json.loads(data)
 
 # Adds new record
-client.query(q.create(q.collection(coll),{'data': json_data}))
+client.query(q.create(q.collection(coll),{'data': data}))
 
 # Prunes duplicate records
 documents = client.query(q.paginate(q.documents(q.collection(coll))))

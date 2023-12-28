@@ -81,6 +81,10 @@ def alert_status():
 		key = next(iter(entry))
 		value = entry[key]
 		result_dict[key] = int(value) if value.isdigit() else 0
+	new_key = '< 100% Premium TV'
+	result_dict[new_key] = result_dict.pop('<100% Premium TV')
+	new_key = '< 77.5% Premium Mix'
+	result_dict[new_key] = result_dict.pop('Premium Mix < 77.5%')
 	return(result_dict)
 	
 # gets individual employee PSQ data
@@ -347,7 +351,15 @@ def cileads():
 	converted_data = [{key: convert_to_float(value) for key, value in entry.items()} for entry in json_dict]
 	return(converted_data)
 
-
+# saves the formatted data 
+def save_output(data):
+  json_data = json.loads(data)
+  date = get_date()
+  file_name = date.replace('/', '-')
+  with open('data/daily.json', 'w') as file:
+    json.dump(json_data, file, indent=2)
+  with open(f'data/daily/{file_name}.json', 'w') as file:
+    json.dump(json_data, file, indent=2)
 
 # -----------------BUILDS THE JSON OUTPUT
 
@@ -382,7 +394,6 @@ def build_output():
         return(json_data)
 
 data = build_output()
-with open('data/daily.json', 'w') as file:
-	json.dump(data, file)
+save_output(data)
 
 print('File Saved')
