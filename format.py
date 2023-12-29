@@ -358,9 +358,13 @@ def cileads():
 
 # saves the formatted data 
 def save_output(data):
+    date = get_date()
+    file_name = date.replace('/', '-')
     json_data = json.loads(data)
     with open('data/daily.json', 'w') as file:
-        json.dump(json_data, file, indent=2)
+      json.dump(json_data, file, indent=2)
+    with open(f'data/daily/{file_name}.json', 'w') as file:
+      json.dump(json_data, file, indent=2)
 
 # -----------------BUILDS THE JSON OUTPUT
 
