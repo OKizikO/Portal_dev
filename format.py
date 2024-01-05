@@ -154,8 +154,8 @@ def rates():
     modified_string = re.sub(r'(\d+%)(\d+%)', r'\1 RPMTD: \2', modified_string)
     modified_string = modified_string[:-1]
     strip = modified_string.replace('%','').replace(' ', '')
-    pattern = re.compile(r'(\w+PPVGAYOYGoal:>=)(0*)(\d+\.?\d*)')
-    modified_string = pattern.sub(r'\1\2 YOY:\3', strip)
+    pattern = re.compile(r'(\w+PPVGAYOYGoal:>=0)(-?\d+\.?\d*)')
+    modified_string = pattern.sub(r'\1 YOY:\2', strip)
     modified_string = modified_string.replace('RR', 'OppsRR', 1)
     output_string = re.sub(r'(\d)([A-Za-z])', r'\1 \2', modified_string)
     output_string = output_string.replace('$', '').replace(',', '').replace(' ', ',').replace('Plus1,RR', 'Plus1RR')
