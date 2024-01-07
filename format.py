@@ -365,7 +365,16 @@ def save_output(data):
       json.dump(json_data, file, indent=2)
     with open(f'data/daily/{file_name}.json', 'w') as file:
       json.dump(json_data, file, indent=2)
-
+    with open('data/full.json', 'r') as file:
+    	old_data = json.load(file)
+    new_key = list(json_data.keys())[0] 
+    if new_key not in [list(entry.keys())[0] for entry in old_data]:
+      old_data.append(json_data)
+      with open('data/full.json', 'w') as file:
+          json.dump(old_data, file, indent=2)
+      print('Record Added')
+    else:
+      print('No Update, Record Skipped')
 # -----------------BUILDS THE JSON OUTPUT
 
 
@@ -400,4 +409,3 @@ def build_output():
 
 data = build_output()
 save_output(data)
-print('File Saved')

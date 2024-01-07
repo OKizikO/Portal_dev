@@ -1,17 +1,34 @@
 import ui
 import os
+import json
+
+# ---------- LOGIC ----------
+
+# load current and previous day from data
+with open('data/full.json', 'r')as file:
+	data = json.load(file)
+	current = data[-1]
+	current_date = next(iter(current))
+	previous = data[-2]
+	previous_date = next(iter(previous))
+	
+	
+# ---------- UI ----------
 
 # Determine if dark mode is on amd set colors accordingly
 dark_mode = ui.get_ui_style() == 'dark'
 background = 'black' if dark_mode else 'white'
 tint = 'teal' if dark_mode else 'turquoise'
-
+text_color = 'white' if dark_mode else 'black'
 		
 # Summary View
 def call_summary(sender):
     v = ui.ScrollView()
     v.background_color = background
     v.name = 'Summary'
+    header = ui.Label(frame=(10,10,200,50), text_color=text_color)
+    header.text = f'Summary for {current_date}'
+    v.add_subview(header)
     sender.navigation_view.push_view(v)
 
 
