@@ -3597,5 +3597,230 @@
         }
       ]
     }
+  },
+  {
+    "01/08/24": {
+      "alerts": 8.0,
+      "rank": {
+        "district": "10 out of 11",
+        "market": "34 out of 50",
+        "company": "1,398 out of 1,953"
+      },
+      "ucr": 8.1,
+      "status": {
+        "Personal Sales Quotas": 3,
+        "< 100% to Plus 1": 1,
+        "< 80% to CRU Voice": 1,
+        "< 80% to PPVGA": 1,
+        "< 90% Broadband": 0,
+        "< 80% Accessory Sales": 0,
+        "< 77%  Next UP": 0,
+        "< 70% PA + HTP": 1,
+        "< 82% CSAT": 0,
+        "< 180 Days Tenure": 0,
+        "< 100% Premium TV": 1,
+        "< 77.5% Premium Mix": 0
+      },
+      "psq": [
+        {
+          "Employee": "Chris Geese",
+          "Hire Date": "01/03/19",
+          "Role": "Retail Store Manager",
+          "Opps RR": 23.0,
+          "Premium Products MTD": 1.0,
+          "Premium Products RR": 4.0,
+          "Plus 1 RR": 0.0
+        },
+        {
+          "Employee": "Paul Mackey",
+          "Hire Date": "03/17/22",
+          "Role": "Sr Retail Sales Consultant",
+          "Opps RR": 43.0,
+          "Premium Products MTD": 4.0,
+          "Premium Products RR": 16.0,
+          "Plus 1 RR": 4.0
+        },
+        {
+          "Employee": "Afton Walter",
+          "Hire Date": "10/09/23",
+          "Role": "Retail Sales Consultant",
+          "Opps RR": 43.0,
+          "Premium Products MTD": 3.0,
+          "Premium Products RR": 12.0,
+          "Plus 1 RR": 0.0
+        }
+      ],
+      "leads": [
+        {
+          "Employee": "Chris Geese",
+          "CI LeadsMTD": 0.0,
+          "CI LeadsCalled": 0.0,
+          "CI LeadsContact %": "0%",
+          "CI MatchedSales": 0.0
+        },
+        {
+          "Employee": "Afton Walter",
+          "CI LeadsMTD": 7.0,
+          "CI LeadsCalled": 3.0,
+          "CI LeadsContact %": "43%",
+          "CI MatchedSales": 0.0
+        },
+        {
+          "Employee": "Paul Mackey",
+          "CI LeadsMTD": 1.0,
+          "CI LeadsCalled": 0.0,
+          "CI LeadsContact %": "0%",
+          "CI MatchedSales": 1.0
+        }
+      ],
+      "rates": {
+        "OppsGoal": 145,
+        "OppsRR": 116,
+        "Opps": 80,
+        "Plus1RR": 4,
+        "Upgrades": 54,
+        "PremiumGoal": 51,
+        "RR": 31,
+        "Prem": 61,
+        "PPVGA": 31,
+        "TV": 0,
+        "BB": 0,
+        "PPVGAYOYGoal": ">=0",
+        "YOY": -34.0,
+        "CRUGA": 8,
+        "FNGA": 8,
+        "OppsYOY": -9,
+        "ProtectionGoal": ">=66",
+        "PAMTD": 58.33,
+        "HTP": 0.0,
+        "PADrop": 11,
+        "AccessoriesGoal": 6768,
+        "AccRR": 6731,
+        "MTD": 1737,
+        "APO": 58,
+        "AIP": 0,
+        "RatePlanGoal": ">=83",
+        "RPMTD": 88,
+        "Elite": 62,
+        "NextUP": 78,
+        "crugoal": 10.0,
+        "tvgoal": 1.0,
+        "plus1goal": 18.0
+      },
+      "RPD": {
+        "opps": 5.0,
+        "ppvga": 2.0,
+        "tv": 1.0,
+        "ar": 219.0
+      },
+      "csat": {
+        "CSAT": 100.0,
+        "PPVGACANCEL": 0.0
+      },
+      "people": [
+        {
+          "Paul Mackey": {
+            "title": "SRSC",
+            "hired": "03/17/22",
+            "updated": "01/08/24",
+            "district": "20 out of 24",
+            "market": "80 out of 110",
+            "opps": {
+              "OppsGoal": 65.0,
+              "RR": 43.0,
+              "MTD": 11.0,
+              "PlusOne": 4.0,
+              "HighRisk": 50.0,
+              "UCR": 0.0
+            },
+            "prem": {
+              "PremiumGoal": 30.0,
+              "RR": 16.0,
+              "MTD": 4.0,
+              "PPVGA": 4.0,
+              "TV": 0.0,
+              "BB": 0.0
+            },
+            "cru": {
+              "CRUPPVGAGoal": 4.0,
+              "RR": 4.0,
+              "MTD": 1.0,
+              "CRU": 1.0,
+              "FN": 4.0
+            },
+            "pa": {
+              "ProtectionGoal": 65.0,
+              "PARR": 50.0,
+              "PADrop": 10.0,
+              "HTP": 0.0
+            },
+            "ar": {
+              "AccessoriesGoal": 3500.0,
+              "ACRR": 1368.0,
+              "MTD": 353.0,
+              "AIP": 0.0
+            },
+            "rpm": {
+              "RatePlanGoal": 88.0,
+              "RPMRR": 100.0,
+              "NextUP": 100.0,
+              "CSAT": 100.0,
+              "SIG": 100.0
+            }
+          }
+        },
+        {
+          "Afton Walter": {
+            "title": "RSC",
+            "hired": "10/09/23",
+            "updated": "01/08/24",
+            "district": "8 out of 24",
+            "market": "48 out of 110",
+            "opps": {
+              "OppsGoal": 55.0,
+              "RR": 43.0,
+              "MTD": 11.0,
+              "PlusOne": 0.0,
+              "HighRisk": 0.0,
+              "UCR": 12.0
+            },
+            "prem": {
+              "PremiumGoal": 25.0,
+              "RR": 12.0,
+              "MTD": 3.0,
+              "PPVGA": 3.0,
+              "TV": 0.0,
+              "BB": 0.0
+            },
+            "cru": {
+              "CRUPPVGAGoal": 3.0,
+              "RR": 4.0,
+              "MTD": 1.0,
+              "CRU": 1.0,
+              "FN": 0.0
+            },
+            "pa": {
+              "ProtectionGoal": 65.0,
+              "PARR": 50.0,
+              "PADrop": 10.0,
+              "HTP": 0.0
+            },
+            "ar": {
+              "AccessoriesGoal": 3000.0,
+              "ACRR": 3778.0,
+              "MTD": 975.0,
+              "AIP": 0.0
+            },
+            "rpm": {
+              "RatePlanGoal": 88.0,
+              "RPMRR": 67.0,
+              "NextUP": 73.0,
+              "CSAT": 100.0,
+              "SIG": 100.0
+            }
+          }
+        }
+      ]
+    }
   }
 ]
